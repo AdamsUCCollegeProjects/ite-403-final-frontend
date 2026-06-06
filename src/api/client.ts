@@ -8,6 +8,12 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ''
 
 const AUTH_ENDPOINTS = ['/api/login', '/api/register', '/api/admin/register']
 
+let unauthorizedHandler: (() => void) | null = null
+
+export function setUnauthorizedHandler(handler: () => void): void {
+  unauthorizedHandler = handler
+}
+
 export class ApiClientError extends Error {
   fieldErrors?: Record<string, string>
 
@@ -53,6 +59,7 @@ function handleUnauthorized(error: AxiosError): void {
   }
 
   clearAuthToken()
+  unauthorizedHandler?.()
 
   const currentPath = router.currentRoute.value.fullPath
 
