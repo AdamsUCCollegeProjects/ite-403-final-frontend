@@ -87,8 +87,9 @@ async function loadData(): Promise<void> {
     products.value = productList
     categories.value = categoryList
   } catch (error) {
-    errorMessage.value =
-      error instanceof ApiClientError ? error.message : 'Failed to load products'
+    errorMessage.value = error instanceof ApiClientError ? error.message : 'Failed to load products'
+    products.value = []
+    categories.value = []
   } finally {
     isLoading.value = false
   }
@@ -116,8 +117,7 @@ async function handleSubmit(): Promise<void> {
     resetForm()
     await loadData()
   } catch (error) {
-    formError.value =
-      error instanceof ApiClientError ? error.message : 'Failed to save product'
+    formError.value = error instanceof ApiClientError ? error.message : 'Failed to save product'
   } finally {
     isSubmitting.value = false
   }
@@ -153,7 +153,7 @@ onMounted(() => {
       </Button>
     </div>
 
-    <Card v-if="isFormOpen" class="mb-6">
+    <Card v-if="isFormOpen" class="mb-6 p-5">
       <h3 class="mb-4 font-semibold text-slate-900">
         {{ editingProduct ? 'Edit product' : 'New product' }}
       </h3>
@@ -163,12 +163,7 @@ onMounted(() => {
           <label for="category_id" class="mb-1.5 block text-sm font-medium text-slate-700">
             Category <span class="text-red-500">*</span>
           </label>
-          <select
-            id="category_id"
-            v-model="formState.category_id"
-            required
-            class="input-field"
-          >
+          <select id="category_id" v-model="formState.category_id" required class="input-field">
             <option value="" disabled>Select category</option>
             <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.name }}
@@ -206,9 +201,7 @@ onMounted(() => {
           <Button type="submit" size="sm" :disabled="isSubmitting">
             {{ isSubmitting ? 'Saving...' : 'Save' }}
           </Button>
-          <Button variant="secondary" size="sm" type="button" @click="resetForm">
-            Cancel
-          </Button>
+          <Button variant="secondary" size="sm" type="button" @click="resetForm"> Cancel </Button>
         </div>
       </form>
     </Card>

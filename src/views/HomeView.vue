@@ -47,10 +47,6 @@ function getCategoryName(categoryId: number): string | undefined {
   return categories.value.find((category) => category.id === categoryId)?.name
 }
 
-function normalizeList<T>(value: unknown): T[] {
-  return Array.isArray(value) ? value : []
-}
-
 async function loadShopData(): Promise<void> {
   isLoading.value = true
   errorMessage.value = ''
@@ -61,12 +57,13 @@ async function loadShopData(): Promise<void> {
       productsApi.getProducts(selectedCategoryId.value ?? undefined),
     ])
 
-    categories.value = normalizeList<Category>(categoryList)
-    products.value = normalizeList<Product>(productList)
+    categories.value = categoryList
+    products.value = productList
   } catch (error) {
     errorMessage.value =
       error instanceof ApiClientError ? error.message : 'Failed to load products'
     products.value = []
+    categories.value = []
   } finally {
     isLoading.value = false
   }

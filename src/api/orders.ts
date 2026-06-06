@@ -1,5 +1,6 @@
 import { apiRequest } from '@/api/client'
 import type { CheckoutPayload, OrderDetail, OrderSummary } from '@/types/api'
+import { unwrapList } from '@/utils/api'
 
 export function checkout(payload: CheckoutPayload): Promise<OrderDetail> {
   return apiRequest<OrderDetail>({
@@ -9,11 +10,13 @@ export function checkout(payload: CheckoutPayload): Promise<OrderDetail> {
   })
 }
 
-export function getOrders(): Promise<OrderSummary[]> {
-  return apiRequest<OrderSummary[]>({
+export async function getOrders(): Promise<OrderSummary[]> {
+  const response = await apiRequest<{ orders: OrderSummary[] } | OrderSummary[]>({
     method: 'GET',
     url: '/api/orders',
   })
+
+  return unwrapList<OrderSummary>(response, 'orders')
 }
 
 export function getOrder(orderId: number): Promise<OrderDetail> {

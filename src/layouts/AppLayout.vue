@@ -59,7 +59,7 @@ onMounted(() => {
     >
       <nav class="page-container flex items-center justify-between py-4">
         <RouterLink to="/" class="flex items-center gap-2 text-xl font-bold text-brand-600">
-          <ShoppingBag class="h-6 w-6" />
+          <ShoppingBag v-if="!isAuthPage" class="h-6 w-6" />
           <span v-if="!isAuthPage">Boutique</span>
         </RouterLink>
 
@@ -94,11 +94,7 @@ onMounted(() => {
             Orders
           </RouterLink>
 
-          <RouterLink
-            v-if="authStore.isAdmin"
-            to="/admin"
-            class="btn-ghost hidden sm:inline-flex"
-          >
+          <RouterLink v-if="authStore.isAdmin" to="/admin" class="btn-ghost hidden sm:inline-flex">
             <LayoutDashboard class="h-4 w-4" />
             Admin
           </RouterLink>
@@ -110,7 +106,9 @@ onMounted(() => {
               >
                 {{ userInitials }}
               </div>
-              <span class="max-w-24 truncate text-sm text-slate-600">{{ authStore.user?.name }}</span>
+              <span class="max-w-24 truncate text-sm text-slate-600">{{
+                authStore.user?.name
+              }}</span>
             </div>
             <button type="button" class="btn-ghost" aria-label="Logout" @click="handleLogout">
               <LogOut class="h-4 w-4" />

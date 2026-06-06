@@ -10,6 +10,7 @@ import type {
   Product,
   UpdateProductPayload,
 } from '@/types/api'
+import { unwrapList } from '@/utils/api'
 
 export function getDashboard(): Promise<AdminDashboard> {
   return apiRequest<AdminDashboard>({
@@ -67,11 +68,13 @@ export function deleteProduct(productId: number): Promise<MessageResponse> {
   })
 }
 
-export function getAdminOrders(): Promise<AdminOrderSummary[]> {
-  return apiRequest<AdminOrderSummary[]>({
+export async function getAdminOrders(): Promise<AdminOrderSummary[]> {
+  const response = await apiRequest<{ orders: AdminOrderSummary[] } | AdminOrderSummary[]>({
     method: 'GET',
     url: '/api/admin/orders',
   })
+
+  return unwrapList<AdminOrderSummary>(response, 'orders')
 }
 
 export function getAdminOrder(orderId: number): Promise<AdminOrderDetail> {

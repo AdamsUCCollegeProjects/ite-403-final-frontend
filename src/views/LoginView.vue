@@ -56,7 +56,7 @@ async function handleSubmit(): Promise<void> {
     <AuthBrandPanel />
 
     <div class="flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
-      <Card class="w-full max-w-md">
+      <Card class="w-full max-w-md p-5">
         <h1 class="text-2xl font-bold text-slate-900">Sign in</h1>
         <p class="mt-1 text-sm text-muted-foreground">Enter your credentials to continue</p>
 
