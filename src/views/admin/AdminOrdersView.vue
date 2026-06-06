@@ -2,16 +2,16 @@
 import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import * as ordersApi from '@/api/orders'
+import * as adminApi from '@/api/admin'
 import { ApiClientError } from '@/api/client'
 import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import LoadingState from '@/components/LoadingState.vue'
 import OrderStatusBadge from '@/components/OrderStatusBadge.vue'
-import type { OrderSummary } from '@/types/api'
+import type { AdminOrderSummary } from '@/types/api'
 import { formatCurrency } from '@/utils/format'
 
-const orders = ref<OrderSummary[]>([])
+const orders = ref<AdminOrderSummary[]>([])
 const isLoading = ref(true)
 const errorMessage = ref('')
 
@@ -20,7 +20,7 @@ async function loadOrders(): Promise<void> {
   errorMessage.value = ''
 
   try {
-    orders.value = await ordersApi.getOrders()
+    orders.value = await adminApi.getAdminOrders()
   } catch (error) {
     errorMessage.value =
       error instanceof ApiClientError ? error.message : 'Failed to load orders'
@@ -40,23 +40,19 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1 class="mb-6 text-2xl font-bold text-gray-900">Order History</h1>
+    <h2 class="mb-6 text-2xl font-bold text-gray-900">Orders</h2>
 
     <LoadingState v-if="isLoading" message="Loading orders..." />
     <ErrorAlert v-else-if="errorMessage" :message="errorMessage" />
 
-    <EmptyState
-      v-else-if="orders.length === 0"
-      message="No orders yet."
-      action-label="Browse products"
-      action-to="/"
-    />
+    <EmptyState v-else-if="orders.length === 0" message="No orders yet." />
 
     <div v-else class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
       <table class="min-w-full text-left text-sm">
         <thead class="border-b border-gray-200 bg-gray-50">
           <tr>
             <th class="px-4 py-3 font-medium text-gray-700">Order</th>
+            <th class="px-4 py-3 font-medium text-gray-700">Customer</th>
             <th class="px-4 py-3 font-medium text-gray-700">Date</th>
             <th class="px-4 py-3 font-medium text-gray-700">Status</th>
             <th class="px-4 py-3 font-medium text-gray-700">Total</th>
@@ -70,12 +66,13 @@ onMounted(() => {
           >
             <td class="px-4 py-3">
               <RouterLink
-                :to="{ name: 'order-detail', params: { id: order.id } }"
+                :to="{ name: 'admin-order-detail', params: { id: order.id } }"
                 class="font-medium text-blue-600 hover:underline"
               >
                 #{{ order.id }}
               </RouterLink>
             </td>
+            <td class="px-4 py-3 text-gray-600">{{ order.shipping_name }}</td>
             <td class="px-4 py-3 text-gray-600">{{ formatDate(order.created_at) }}</td>
             <td class="px-4 py-3">
               <OrderStatusBadge :status="order.status" />

@@ -53,11 +53,37 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/OrderDetailView.vue'),
         meta: { requiresAuth: true },
       },
+    ],
+  },
+  {
+    path: '/admin',
+    component: () => import('@/layouts/AdminLayout.vue'),
+    meta: { requiresAdmin: true },
+    children: [
       {
-        path: 'admin',
-        name: 'admin',
-        component: () => import('@/views/admin/AdminPlaceholderView.vue'),
-        meta: { requiresAdmin: true },
+        path: '',
+        name: 'admin-dashboard',
+        component: () => import('@/views/admin/DashboardView.vue'),
+      },
+      {
+        path: 'categories',
+        name: 'admin-categories',
+        component: () => import('@/views/admin/AdminCategoriesView.vue'),
+      },
+      {
+        path: 'products',
+        name: 'admin-products',
+        component: () => import('@/views/admin/AdminProductsView.vue'),
+      },
+      {
+        path: 'orders',
+        name: 'admin-orders',
+        component: () => import('@/views/admin/AdminOrdersView.vue'),
+      },
+      {
+        path: 'orders/:id',
+        name: 'admin-order-detail',
+        component: () => import('@/views/admin/AdminOrderDetailView.vue'),
       },
     ],
   },

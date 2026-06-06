@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 
 import * as ordersApi from '@/api/orders'
 import { ApiClientError } from '@/api/client'
+import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import FormField from '@/components/FormField.vue'
 import LoadingState from '@/components/LoadingState.vue'
@@ -66,9 +67,12 @@ onMounted(() => {
 
     <LoadingState v-if="cartStore.isLoading" />
 
-    <div v-else-if="cartStore.items.length === 0" class="py-12 text-center text-gray-500">
-      Your cart is empty.
-    </div>
+    <EmptyState
+      v-else-if="cartStore.items.length === 0"
+      message="Your cart is empty."
+      action-label="Continue shopping"
+      action-to="/"
+    />
 
     <template v-else>
       <p class="mb-6 text-gray-600">

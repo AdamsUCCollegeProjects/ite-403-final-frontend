@@ -1,48 +1,63 @@
-# ecommerce-shop
+# E-commerce Shop (Vue Frontend)
 
-This template should help get you started developing with Vue 3 in Vite.
+Vue 3 frontend for the college e-commerce assignment. Connects to the PHP REST API backend for product browsing, cart/checkout, order history, and admin management.
 
-## Recommended IDE Setup
+## Prerequisites
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- Node.js 18+
+- Backend API running at `http://localhost:8000` (see `backend-server/` — run `docker compose up` and apply migrations)
 
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Setup
 
 ```sh
 npm install
+cp .env.example .env
 ```
 
-### Compile and Hot-Reload for Development
+For local development, leave `VITE_API_BASE_URL` empty or unset in `.env` so requests go through the Vite dev proxy (`/api` → `http://localhost:8000`).
+
+For production builds, set:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+## Development
+
+Start the dev server (default: `http://localhost:5173`):
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+The Vite proxy forwards `/api` and `/health` to the backend, avoiding CORS issues during development.
+
+## Build
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Lint & type-check
 
 ```sh
 npm run lint
+npm run type-check
 ```
+
+## Features
+
+- **Shop:** Browse products, filter by category, view product details, add to cart
+- **Auth:** Login and register (customer or admin accounts)
+- **Cart & checkout:** Update quantities, place orders with shipping details
+- **Orders:** View order history and order details
+- **Admin:** Dashboard stats, category/product CRUD, order management with status updates
+
+## Typical workflow
+
+1. Start the backend (`docker compose up` in `backend-server/`)
+2. Start the frontend (`npm run dev`)
+3. Register a customer → browse products → add to cart → checkout
+4. Register an admin → open **Admin** in the nav → manage categories, products, and orders
+
+Admins are redirected to `/admin` after login. Customers return to the page they were viewing or the shop home.

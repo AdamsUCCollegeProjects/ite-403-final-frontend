@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 
 import { ApiClientError } from '@/api/client'
 import CartItemRow from '@/components/CartItemRow.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import LoadingState from '@/components/LoadingState.vue'
 import { useCartStore } from '@/stores/cart'
@@ -64,12 +65,12 @@ onMounted(() => {
     <LoadingState v-if="cartStore.isLoading && cartStore.items.length === 0" />
     <ErrorAlert v-else-if="errorMessage" class="mb-4" :message="errorMessage" />
 
-    <div v-if="!cartStore.isLoading && cartStore.items.length === 0" class="py-12 text-center">
-      <p class="text-gray-500">Your cart is empty.</p>
-      <RouterLink to="/" class="mt-4 inline-block text-blue-600 hover:underline">
-        Continue shopping
-      </RouterLink>
-    </div>
+    <EmptyState
+      v-if="!cartStore.isLoading && cartStore.items.length === 0"
+      message="Your cart is empty."
+      action-label="Continue shopping"
+      action-to="/"
+    />
 
     <div v-else-if="cartStore.items.length > 0">
       <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">

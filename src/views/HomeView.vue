@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import * as categoriesApi from '@/api/categories'
 import * as productsApi from '@/api/products'
 import CategoryFilter from '@/components/CategoryFilter.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import LoadingState from '@/components/LoadingState.vue'
 import ProductCard from '@/components/ProductCard.vue'
@@ -79,9 +80,7 @@ watch(selectedCategoryId, () => {
     <LoadingState v-if="isLoading" message="Loading products..." />
     <ErrorAlert v-else-if="errorMessage" :message="errorMessage" />
 
-    <div v-else-if="products.length === 0" class="py-12 text-center text-gray-500">
-      No products found.
-    </div>
+    <EmptyState v-else-if="products.length === 0" message="No products found." />
 
     <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <ProductCard v-for="product in products" :key="product.id" :product="product" />
