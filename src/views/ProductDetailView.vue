@@ -10,7 +10,7 @@ import Button from '@/components/Button.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import LoadingState from '@/components/LoadingState.vue'
 import PageHeader from '@/components/PageHeader.vue'
-import ProductImagePlaceholder from '@/components/ProductImagePlaceholder.vue'
+import ProductImage from '@/components/ProductImage.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import type { Category, Product } from '@/types/api'
@@ -111,9 +111,12 @@ onMounted(() => {
 
       <div class="grid gap-8 lg:grid-cols-2 lg:gap-12">
         <div class="card overflow-hidden">
-          <ProductImagePlaceholder
+          <ProductImage
+            :image-url="product.image_url"
+            :thumbnail-url="product.thumbnail_url"
             :category-id="product.category_id"
             :category-name="category?.name"
+            :alt="product.name"
             size="lg"
           />
         </div>

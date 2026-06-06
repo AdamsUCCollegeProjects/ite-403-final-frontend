@@ -41,6 +41,9 @@ export interface Product {
   description: string
   price: string
   stock: number
+  image_file_id: string | null
+  image_url: string | null
+  thumbnail_url: string | null
   created_at: string
   updated_at: string
 }
@@ -51,6 +54,7 @@ export interface CreateProductPayload {
   description: string
   price: string
   stock: number
+  image_file_id?: string | null
 }
 
 export interface UpdateProductPayload {
@@ -59,6 +63,27 @@ export interface UpdateProductPayload {
   description?: string
   price?: string
   stock?: number
+  image_file_id?: string | null
+}
+
+export interface UploadedFileThumbnail {
+  mime_type: string
+  file_size: number
+  width: number
+  height: number
+  url: string
+}
+
+export interface UploadedFile {
+  id: string
+  original_filename: string
+  stored_filename: string
+  mime_type: string
+  file_size: number
+  storage_path: string
+  thumbnail: UploadedFileThumbnail | null
+  url: string
+  created_at: string
 }
 
 export interface CartItem {

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import ProductImagePlaceholder from '@/components/ProductImagePlaceholder.vue'
+import ProductImage from '@/components/ProductImage.vue'
 import type { Product } from '@/types/api'
 import { formatCurrency } from '@/utils/format'
 
@@ -41,9 +41,11 @@ const stockLabel = computed(() => {
     :to="{ name: 'product-detail', params: { id: product.id } }"
     class="group card block overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]"
   >
-    <ProductImagePlaceholder
+    <ProductImage
+      :thumbnail-url="product.thumbnail_url"
       :category-id="product.category_id"
       :category-name="categoryName"
+      :alt="product.name"
       size="md"
     />
 

@@ -4,6 +4,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
 
 import * as adminApi from '@/api/admin'
 import * as categoriesApi from '@/api/categories'
+import * as filesApi from '@/api/files'
 import * as productsApi from '@/api/products'
 import { ApiClientError } from '@/api/client'
 import Button from '@/components/Button.vue'
@@ -11,10 +12,13 @@ import Card from '@/components/Card.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import FormField from '@/components/FormField.vue'
+import ImageUploadField from '@/components/ImageUploadField.vue'
 import LoadingState from '@/components/LoadingState.vue'
 import PageHeader from '@/components/PageHeader.vue'
+import ProductImage from '@/components/ProductImage.vue'
 import type { Category, Product } from '@/types/api'
 import { formatCurrency } from '@/utils/format'
+import { resolveApiUrl } from '@/utils/resolveApiUrl'
 
 interface ProductFormState {
   category_id: string
@@ -39,6 +43,9 @@ const errorMessage = ref('')
 const formError = ref('')
 const formState = ref<ProductFormState>({ ...EMPTY_FORM })
 const editingProduct = ref<Product | null>(null)
+const imageFileId = ref<string | null>(null)
+const imagePreviewUrl = ref<string | null>(null)
+const originalImageFileId = ref<string | null>(null)
 const isFormOpen = ref(false)
 const isSubmitting = ref(false)
 const deletingId = ref<number | null>(null)
@@ -50,6 +57,9 @@ function getCategoryName(categoryId: number): string {
 function resetForm(): void {
   formState.value = { ...EMPTY_FORM }
   editingProduct.value = null
+  imageFileId.value = null
+  imagePreviewUrl.value = null
+  originalImageFileId.value = null
   isFormOpen.value = false
   formError.value = ''
 }
@@ -57,6 +67,9 @@ function resetForm(): void {
 function openCreateForm(): void {
   editingProduct.value = null
   formState.value = { ...EMPTY_FORM }
+  imageFileId.value = null
+  imagePreviewUrl.value = null
+  originalImageFileId.value = null
   formError.value = ''
   isFormOpen.value = true
 }
@@ -70,8 +83,33 @@ function openEditForm(product: Product): void {
     price: product.price,
     stock: String(product.stock),
   }
+  imageFileId.value = product.image_file_id
+  imagePreviewUrl.value = resolveApiUrl(product.thumbnail_url)
+  originalImageFileId.value = product.image_file_id
   formError.value = ''
   isFormOpen.value = true
+}
+
+function handleImageUploaded(payload: { id: string; previewUrl: string }): void {
+  imageFileId.value = payload.id
+  imagePreviewUrl.value = payload.previewUrl
+}
+
+function handleImageCleared(): void {
+  imageFileId.value = null
+  imagePreviewUrl.value = null
+}
+
+async function deleteReplacedImage(): Promise<void> {
+  if (!originalImageFileId.value || originalImageFileId.value === imageFileId.value) {
+    return
+  }
+
+  try {
+    await filesApi.deleteFile(originalImageFileId.value)
+  } catch {
+    // Product save succeeded; orphaned file cleanup is best-effort.
+  }
 }
 
 async function loadData(): Promise<void> {
@@ -109,9 +147,17 @@ async function handleSubmit(): Promise<void> {
 
   try {
     if (editingProduct.value) {
-      await adminApi.updateProduct(editingProduct.value.id, payload)
+      await adminApi.updateProduct(editingProduct.value.id, {
+        ...payload,
+        image_file_id: imageFileId.value,
+      })
+      await deleteReplacedImage()
     } else {
-      await adminApi.createProduct(payload)
+      const createPayload = imageFileId.value
+        ? { ...payload, image_file_id: imageFileId.value }
+        : payload
+
+      await adminApi.createProduct(createPayload)
     }
 
     resetForm()
@@ -197,6 +243,13 @@ onMounted(() => {
             class="input-field"
           />
         </div>
+        <div class="sm:col-span-2">
+          <ImageUploadField
+            :preview-url="imagePreviewUrl"
+            @uploaded="handleImageUploaded"
+            @cleared="handleImageCleared"
+          />
+        </div>
         <div class="flex gap-2 sm:col-span-2">
           <Button type="submit" size="sm" :disabled="isSubmitting">
             {{ isSubmitting ? 'Saving...' : 'Save' }}
@@ -218,6 +271,7 @@ onMounted(() => {
       <table class="min-w-full text-left text-sm">
         <thead class="table-header sticky top-0">
           <tr>
+            <th class="px-4 py-3 font-semibold text-slate-700">Image</th>
             <th class="px-4 py-3 font-semibold text-slate-700">Name</th>
             <th class="px-4 py-3 font-semibold text-slate-700">Category</th>
             <th class="px-4 py-3 font-semibold text-slate-700">Price</th>
@@ -227,6 +281,17 @@ onMounted(() => {
         </thead>
         <tbody>
           <tr v-for="product in products" :key="product.id" class="table-row">
+            <td class="px-4 py-4">
+              <div class="h-12 w-12 overflow-hidden rounded-lg">
+                <ProductImage
+                  :thumbnail-url="product.thumbnail_url"
+                  :category-id="product.category_id"
+                  :category-name="getCategoryName(product.category_id)"
+                  size="sm"
+                  :alt="product.name"
+                />
+              </div>
+            </td>
             <td class="px-4 py-4 font-medium text-slate-900">{{ product.name }}</td>
             <td class="px-4 py-4 text-muted-foreground">
               {{ getCategoryName(product.category_id) }}
