@@ -15,7 +15,7 @@ const emit = defineEmits<{
 
 <template>
   <div>
-    <label :for="name" class="mb-1 block text-sm font-medium text-gray-700">
+    <label :for="name" class="mb-1.5 block text-sm font-medium text-slate-700">
       {{ label }}
       <span v-if="required" class="text-red-500">*</span>
     </label>
@@ -25,10 +25,10 @@ const emit = defineEmits<{
       :type="type ?? 'text'"
       :value="modelValue"
       :aria-invalid="Boolean(error)"
-      class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-      :class="{ 'border-red-500': error }"
+      class="input-field"
+      :class="{ 'input-field-error': error }"
       @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
-    <p v-if="error" class="mt-1 text-sm text-red-600">{{ error }}</p>
+    <p v-if="error" class="mt-1.5 text-sm text-red-600">{{ error }}</p>
   </div>
 </template>

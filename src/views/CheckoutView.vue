@@ -4,10 +4,12 @@ import { useRouter } from 'vue-router'
 
 import * as ordersApi from '@/api/orders'
 import { ApiClientError } from '@/api/client'
+import Button from '@/components/Button.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import FormField from '@/components/FormField.vue'
 import LoadingState from '@/components/LoadingState.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import { useCartStore } from '@/stores/cart'
 import { formatCurrency } from '@/utils/format'
 
@@ -62,8 +64,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-lg">
-    <h1 class="mb-6 text-2xl font-bold text-gray-900">Checkout</h1>
+  <div>
+    <PageHeader title="Checkout" subtitle="Enter your shipping details to complete your order" />
 
     <LoadingState v-if="cartStore.isLoading" />
 
@@ -74,59 +76,80 @@ onMounted(() => {
       action-to="/"
     />
 
-    <template v-else>
-      <p class="mb-6 text-gray-600">
-        Order total: <span class="font-semibold">{{ formatCurrency(cartStore.total) }}</span>
-      </p>
+    <div v-else class="grid gap-8 lg:grid-cols-3">
+      <div class="lg:col-span-2">
+        <div class="card p-6">
+          <ErrorAlert v-if="errorMessage" class="mb-6" :message="errorMessage" />
 
-      <ErrorAlert v-if="errorMessage" class="mb-4" :message="errorMessage" />
+          <form class="space-y-4" @submit.prevent="handleSubmit">
+            <FormField
+              v-model="shippingName"
+              label="Full name"
+              name="shipping_name"
+              required
+              :error="fieldErrors.shipping_name"
+            />
+            <FormField
+              v-model="shippingAddress"
+              label="Address"
+              name="shipping_address"
+              required
+              :error="fieldErrors.shipping_address"
+            />
+            <FormField
+              v-model="shippingCity"
+              label="City"
+              name="shipping_city"
+              required
+              :error="fieldErrors.shipping_city"
+            />
+            <FormField
+              v-model="shippingPostalCode"
+              label="Postal code"
+              name="shipping_postal_code"
+              required
+              :error="fieldErrors.shipping_postal_code"
+            />
+            <FormField
+              v-model="shippingPhone"
+              label="Phone"
+              name="shipping_phone"
+              type="tel"
+              required
+              :error="fieldErrors.shipping_phone"
+            />
 
-      <form class="space-y-4" @submit.prevent="handleSubmit">
-        <FormField
-          v-model="shippingName"
-          label="Full name"
-          name="shipping_name"
-          required
-          :error="fieldErrors.shipping_name"
-        />
-        <FormField
-          v-model="shippingAddress"
-          label="Address"
-          name="shipping_address"
-          required
-          :error="fieldErrors.shipping_address"
-        />
-        <FormField
-          v-model="shippingCity"
-          label="City"
-          name="shipping_city"
-          required
-          :error="fieldErrors.shipping_city"
-        />
-        <FormField
-          v-model="shippingPostalCode"
-          label="Postal code"
-          name="shipping_postal_code"
-          required
-          :error="fieldErrors.shipping_postal_code"
-        />
-        <FormField
-          v-model="shippingPhone"
-          label="Phone"
-          name="shipping_phone"
-          type="tel"
-          required
-          :error="fieldErrors.shipping_phone"
-        />
+            <Button type="submit" full-width :disabled="isSubmitting">
+              {{ isSubmitting ? 'Placing order...' : 'Place order' }}
+            </Button>
+          </form>
+        </div>
+      </div>
 
-        <button
-          type="submit"
-          class="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-          :disabled="isSubmitting"
-        >
-          {{ isSubmitting ? 'Placing order...' : 'Place order' }}
-        </button>
-      </form>
-    </template>
+      <aside class="lg:col-span-1">
+        <div class="card sticky top-24 p-6">
+          <h2 class="text-lg font-semibold text-slate-900">Order summary</h2>
+
+          <ul class="mt-4 space-y-3 border-b border-slate-100 pb-4">
+            <li
+              v-for="item in cartStore.items"
+              :key="item.id"
+              class="flex justify-between text-sm"
+            >
+              <span class="text-muted-foreground">
+                {{ item.product_name }}
+                <span class="text-slate-400">× {{ item.quantity }}</span>
+              </span>
+              <span class="font-medium text-slate-900">{{ formatCurrency(item.line_total) }}</span>
+            </li>
+          </ul>
+
+          <div class="mt-4 flex justify-between text-base font-semibold text-slate-900">
+            <span>Total</span>
+            <span>{{ formatCurrency(cartStore.total) }}</span>
+          </div>
+        </div>
+      </aside>
+    </div>
   </div>
 </template>

@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
 
 import * as adminApi from '@/api/admin'
 import * as categoriesApi from '@/api/categories'
 import { ApiClientError } from '@/api/client'
+import Button from '@/components/Button.vue'
+import Card from '@/components/Card.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import FormField from '@/components/FormField.vue'
 import LoadingState from '@/components/LoadingState.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import type { Category } from '@/types/api'
 
 const categories = ref<Category[]>([])
@@ -98,52 +102,33 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="mb-6 flex items-center justify-between">
-      <h2 class="text-2xl font-bold text-gray-900">Categories</h2>
-      <button
-        type="button"
-        class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        @click="openCreateForm"
-      >
+    <div class="mb-6 flex items-start justify-between gap-4">
+      <PageHeader compact title="Categories" subtitle="Manage product categories" />
+      <Button size="sm" class="shrink-0" @click="openCreateForm">
+        <Plus class="h-4 w-4" />
         Add category
-      </button>
+      </Button>
     </div>
 
-    <div
-      v-if="isFormOpen"
-      class="mb-6 rounded-lg border border-gray-200 bg-white p-4"
-    >
-      <h3 class="mb-4 font-semibold text-gray-900">
+    <Card v-if="isFormOpen" class="mb-6">
+      <h3 class="mb-4 font-semibold text-slate-900">
         {{ editingCategory ? 'Edit category' : 'New category' }}
       </h3>
       <ErrorAlert v-if="formError" class="mb-4" :message="formError" />
       <form class="flex flex-wrap items-end gap-4" @submit.prevent="handleSubmit">
         <div class="min-w-64 flex-1">
-          <FormField
-            v-model="categoryName"
-            label="Name"
-            name="category_name"
-            required
-          />
+          <FormField v-model="categoryName" label="Name" name="category_name" required />
         </div>
         <div class="flex gap-2">
-          <button
-            type="submit"
-            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-            :disabled="isSubmitting"
-          >
+          <Button type="submit" size="sm" :disabled="isSubmitting">
             {{ isSubmitting ? 'Saving...' : 'Save' }}
-          </button>
-          <button
-            type="button"
-            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            @click="resetForm"
-          >
+          </Button>
+          <Button variant="secondary" size="sm" type="button" @click="resetForm">
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </Card>
 
     <LoadingState v-if="isLoading" message="Loading categories..." />
     <ErrorAlert v-else-if="errorMessage" :message="errorMessage" />
@@ -153,39 +138,37 @@ onMounted(() => {
       message="No categories yet. Add one to get started."
     />
 
-    <div v-else class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+    <div v-else class="table-container">
       <table class="min-w-full text-left text-sm">
-        <thead class="border-b border-gray-200 bg-gray-50">
+        <thead class="table-header sticky top-0">
           <tr>
-            <th class="px-4 py-3 font-medium text-gray-700">Name</th>
-            <th class="px-4 py-3 font-medium text-gray-700">Slug</th>
-            <th class="px-4 py-3 font-medium text-gray-700">Actions</th>
+            <th class="px-4 py-3 font-semibold text-slate-700">Name</th>
+            <th class="px-4 py-3 font-semibold text-slate-700">Slug</th>
+            <th class="px-4 py-3 font-semibold text-slate-700">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="category in categories"
-            :key="category.id"
-            class="border-b border-gray-200"
-          >
-            <td class="px-4 py-3 font-medium text-gray-900">{{ category.name }}</td>
-            <td class="px-4 py-3 text-gray-600">{{ category.slug }}</td>
-            <td class="px-4 py-3">
-              <div class="flex gap-2">
+          <tr v-for="category in categories" :key="category.id" class="table-row">
+            <td class="px-4 py-4 font-medium text-slate-900">{{ category.name }}</td>
+            <td class="px-4 py-4 text-muted-foreground">{{ category.slug }}</td>
+            <td class="px-4 py-4">
+              <div class="flex gap-1">
                 <button
                   type="button"
-                  class="text-blue-600 hover:underline"
+                  class="btn-ghost btn-sm"
+                  aria-label="Edit category"
                   @click="openEditForm(category)"
                 >
-                  Edit
+                  <Pencil class="h-4 w-4" />
                 </button>
                 <button
                   type="button"
-                  class="text-red-600 hover:underline disabled:opacity-50"
+                  class="btn-ghost btn-sm text-red-600 hover:bg-red-50 hover:text-red-700"
                   :disabled="deletingId === category.id"
+                  aria-label="Delete category"
                   @click="handleDelete(category.id)"
                 >
-                  {{ deletingId === category.id ? 'Deleting...' : 'Delete' }}
+                  <Trash2 class="h-4 w-4" />
                 </button>
               </div>
             </td>

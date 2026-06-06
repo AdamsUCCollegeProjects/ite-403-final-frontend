@@ -1,22 +1,68 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
+import ProductImagePlaceholder from '@/components/ProductImagePlaceholder.vue'
 import type { Product } from '@/types/api'
 import { formatCurrency } from '@/utils/format'
 
-defineProps<{
+const props = defineProps<{
   product: Product
+  categoryName?: string
 }>()
+
+const stockBadgeClass = computed(() => {
+  if (props.product.stock === 0) {
+    return 'bg-red-100 text-red-700'
+  }
+
+  if (props.product.stock <= 5) {
+    return 'bg-amber-100 text-amber-700'
+  }
+
+  return 'bg-green-100 text-green-700'
+})
+
+const stockLabel = computed(() => {
+  if (props.product.stock === 0) {
+    return 'Out of stock'
+  }
+
+  if (props.product.stock <= 5) {
+    return `${props.product.stock} left`
+  }
+
+  return 'In stock'
+})
 </script>
 
 <template>
   <RouterLink
     :to="{ name: 'product-detail', params: { id: product.id } }"
-    class="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+    class="group card block overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)]"
   >
-    <h3 class="font-semibold text-gray-900">{{ product.name }}</h3>
-    <p class="mt-2 line-clamp-2 text-sm text-gray-600">{{ product.description }}</p>
-    <p class="mt-3 text-lg font-bold text-blue-600">{{ formatCurrency(product.price) }}</p>
-    <p class="mt-1 text-xs text-gray-500">{{ product.stock }} in stock</p>
+    <ProductImagePlaceholder
+      :category-id="product.category_id"
+      :category-name="categoryName"
+      size="md"
+    />
+
+    <div class="p-4">
+      <div class="mb-2 flex items-start justify-between gap-2">
+        <span
+          v-if="categoryName"
+          class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600"
+        >
+          {{ categoryName }}
+        </span>
+        <span class="rounded-full px-2 py-0.5 text-xs font-medium" :class="stockBadgeClass">
+          {{ stockLabel }}
+        </span>
+      </div>
+
+      <h3 class="font-semibold text-slate-900 group-hover:text-brand-600">{{ product.name }}</h3>
+      <p class="mt-1 line-clamp-2 text-sm text-muted-foreground">{{ product.description }}</p>
+      <p class="mt-3 text-lg font-bold text-brand-600">{{ formatCurrency(product.price) }}</p>
+    </div>
   </RouterLink>
 </template>

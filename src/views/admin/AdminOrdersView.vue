@@ -8,6 +8,7 @@ import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import LoadingState from '@/components/LoadingState.vue'
 import OrderStatusBadge from '@/components/OrderStatusBadge.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import type { AdminOrderSummary } from '@/types/api'
 import { formatCurrency } from '@/utils/format'
 
@@ -40,44 +41,40 @@ onMounted(() => {
 
 <template>
   <div>
-    <h2 class="mb-6 text-2xl font-bold text-gray-900">Orders</h2>
+    <PageHeader title="Orders" subtitle="View and manage customer orders" />
 
     <LoadingState v-if="isLoading" message="Loading orders..." />
     <ErrorAlert v-else-if="errorMessage" :message="errorMessage" />
 
     <EmptyState v-else-if="orders.length === 0" message="No orders yet." />
 
-    <div v-else class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+    <div v-else class="table-container">
       <table class="min-w-full text-left text-sm">
-        <thead class="border-b border-gray-200 bg-gray-50">
+        <thead class="table-header sticky top-0">
           <tr>
-            <th class="px-4 py-3 font-medium text-gray-700">Order</th>
-            <th class="px-4 py-3 font-medium text-gray-700">Customer</th>
-            <th class="px-4 py-3 font-medium text-gray-700">Date</th>
-            <th class="px-4 py-3 font-medium text-gray-700">Status</th>
-            <th class="px-4 py-3 font-medium text-gray-700">Total</th>
+            <th class="px-4 py-3 font-semibold text-slate-700">Order</th>
+            <th class="px-4 py-3 font-semibold text-slate-700">Customer</th>
+            <th class="px-4 py-3 font-semibold text-slate-700">Date</th>
+            <th class="px-4 py-3 font-semibold text-slate-700">Status</th>
+            <th class="px-4 py-3 font-semibold text-slate-700">Total</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="order in orders"
-            :key="order.id"
-            class="border-b border-gray-200 hover:bg-gray-50"
-          >
-            <td class="px-4 py-3">
+          <tr v-for="order in orders" :key="order.id" class="table-row">
+            <td class="px-4 py-4">
               <RouterLink
                 :to="{ name: 'admin-order-detail', params: { id: order.id } }"
-                class="font-medium text-blue-600 hover:underline"
+                class="link-brand"
               >
                 #{{ order.id }}
               </RouterLink>
             </td>
-            <td class="px-4 py-3 text-gray-600">{{ order.shipping_name }}</td>
-            <td class="px-4 py-3 text-gray-600">{{ formatDate(order.created_at) }}</td>
-            <td class="px-4 py-3">
+            <td class="px-4 py-4 text-muted-foreground">{{ order.shipping_name }}</td>
+            <td class="px-4 py-4 text-muted-foreground">{{ formatDate(order.created_at) }}</td>
+            <td class="px-4 py-4">
               <OrderStatusBadge :status="order.status" />
             </td>
-            <td class="px-4 py-3 font-medium text-gray-900">
+            <td class="px-4 py-4 font-semibold text-slate-900">
               {{ formatCurrency(order.total) }}
             </td>
           </tr>

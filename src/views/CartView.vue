@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import { ApiClientError } from '@/api/client'
@@ -7,12 +7,15 @@ import CartItemRow from '@/components/CartItemRow.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import LoadingState from '@/components/LoadingState.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import { useCartStore } from '@/stores/cart'
 import { formatCurrency } from '@/utils/format'
 
 const cartStore = useCartStore()
 const errorMessage = ref('')
 const updatingProductId = ref<number | null>(null)
+
+const itemCount = computed(() => cartStore.itemCount)
 
 async function loadCart(): Promise<void> {
   errorMessage.value = ''
@@ -60,7 +63,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1 class="mb-6 text-2xl font-bold text-gray-900">Shopping Cart</h1>
+    <PageHeader title="Shopping Cart" :subtitle="`${itemCount} item${itemCount === 1 ? '' : 's'}`" />
 
     <LoadingState v-if="cartStore.isLoading && cartStore.items.length === 0" />
     <ErrorAlert v-else-if="errorMessage" class="mb-4" :message="errorMessage" />
@@ -72,42 +75,53 @@ onMounted(() => {
       action-to="/"
     />
 
-    <div v-else-if="cartStore.items.length > 0">
-      <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-        <table class="min-w-full text-left text-sm">
-          <thead class="border-b border-gray-200 bg-gray-50">
-            <tr>
-              <th class="px-4 py-3 font-medium text-gray-700">Product</th>
-              <th class="px-4 py-3 font-medium text-gray-700">Price</th>
-              <th class="px-4 py-3 font-medium text-gray-700">Quantity</th>
-              <th class="px-4 py-3 font-medium text-gray-700">Total</th>
-              <th class="px-4 py-3 font-medium text-gray-700"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <CartItemRow
-              v-for="item in cartStore.items"
-              :key="item.id"
-              :item="item"
-              :is-updating="updatingProductId === item.product_id"
-              @update-quantity="handleUpdateQuantity(item.product_id, $event)"
-              @remove="handleRemove(item.product_id)"
-            />
-          </tbody>
-        </table>
+    <div v-else-if="cartStore.items.length > 0" class="grid gap-8 lg:grid-cols-3">
+      <div class="lg:col-span-2">
+        <div class="table-container">
+          <table class="min-w-full text-left text-sm">
+            <thead class="table-header">
+              <tr>
+                <th class="px-4 py-3 font-semibold text-slate-700">Product</th>
+                <th class="px-4 py-3 font-semibold text-slate-700">Price</th>
+                <th class="px-4 py-3 font-semibold text-slate-700">Quantity</th>
+                <th class="px-4 py-3 font-semibold text-slate-700">Total</th>
+                <th class="px-4 py-3 font-semibold text-slate-700"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <CartItemRow
+                v-for="item in cartStore.items"
+                :key="item.id"
+                :item="item"
+                :is-updating="updatingProductId === item.product_id"
+                @update-quantity="handleUpdateQuantity(item.product_id, $event)"
+                @remove="handleRemove(item.product_id)"
+              />
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="mt-6 flex items-center justify-between">
-        <p class="text-lg font-semibold text-gray-900">
-          Total: {{ formatCurrency(cartStore.total) }}
-        </p>
-        <RouterLink
-          to="/checkout"
-          class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
-        >
-          Proceed to checkout
-        </RouterLink>
-      </div>
+      <aside class="lg:col-span-1">
+        <div class="card sticky top-24 p-6">
+          <h2 class="text-lg font-semibold text-slate-900">Order summary</h2>
+
+          <dl class="mt-4 space-y-3 text-sm">
+            <div class="flex justify-between text-muted-foreground">
+              <dt>Items</dt>
+              <dd>{{ itemCount }}</dd>
+            </div>
+            <div class="flex justify-between border-t border-slate-100 pt-3 text-base font-semibold text-slate-900">
+              <dt>Subtotal</dt>
+              <dd>{{ formatCurrency(cartStore.total) }}</dd>
+            </div>
+          </dl>
+
+          <RouterLink to="/checkout" class="btn-primary mt-6 w-full">
+            Proceed to checkout
+          </RouterLink>
+        </div>
+      </aside>
     </div>
   </div>
 </template>

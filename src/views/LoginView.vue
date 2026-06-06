@@ -2,6 +2,9 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import AuthBrandPanel from '@/components/AuthBrandPanel.vue'
+import Button from '@/components/Button.vue'
+import Card from '@/components/Card.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import FormField from '@/components/FormField.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -48,41 +51,44 @@ async function handleSubmit(): Promise<void> {
 </script>
 
 <template>
-  <div class="mx-auto max-w-md">
-    <h1 class="mb-6 text-2xl font-bold text-gray-900">Login</h1>
+  <div class="flex min-h-[calc(100vh-4.5rem)] items-stretch">
+    <AuthBrandPanel />
 
-    <ErrorAlert v-if="errorMessage" class="mb-4" :message="errorMessage" />
+    <div class="flex flex-1 items-center justify-center px-4 py-10 lg:px-12">
+      <Card class="w-full max-w-md">
+        <h1 class="text-2xl font-bold text-slate-900">Welcome back</h1>
+        <p class="mt-1 text-sm text-muted-foreground">Sign in to your account</p>
 
-    <form class="space-y-4" @submit.prevent="handleSubmit">
-      <FormField
-        v-model="email"
-        label="Email"
-        name="email"
-        type="email"
-        required
-        :error="fieldErrors.email"
-      />
-      <FormField
-        v-model="password"
-        label="Password"
-        name="password"
-        type="password"
-        required
-        :error="fieldErrors.password"
-      />
+        <ErrorAlert v-if="errorMessage" class="mt-6" :message="errorMessage" />
 
-      <button
-        type="submit"
-        class="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-        :disabled="isSubmitting"
-      >
-        {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
-      </button>
-    </form>
+        <form class="mt-6 space-y-4" @submit.prevent="handleSubmit">
+          <FormField
+            v-model="email"
+            label="Email"
+            name="email"
+            type="email"
+            required
+            :error="fieldErrors.email"
+          />
+          <FormField
+            v-model="password"
+            label="Password"
+            name="password"
+            type="password"
+            required
+            :error="fieldErrors.password"
+          />
 
-    <p class="mt-4 text-center text-sm text-gray-600">
-      No account?
-      <RouterLink to="/register" class="text-blue-600 hover:underline">Register</RouterLink>
-    </p>
+          <Button type="submit" full-width :disabled="isSubmitting">
+            {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+          </Button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-muted-foreground">
+          No account?
+          <RouterLink to="/register" class="link-brand">Register</RouterLink>
+        </p>
+      </Card>
+    </div>
   </div>
 </template>

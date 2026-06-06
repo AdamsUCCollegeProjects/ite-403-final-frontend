@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { DollarSign, Package, ShoppingBag, Users } from 'lucide-vue-next'
 
 import * as adminApi from '@/api/admin'
 import { ApiClientError } from '@/api/client'
@@ -8,6 +9,8 @@ import EmptyState from '@/components/EmptyState.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import LoadingState from '@/components/LoadingState.vue'
 import OrderStatusBadge from '@/components/OrderStatusBadge.vue'
+import PageHeader from '@/components/PageHeader.vue'
+import StatCard from '@/components/StatCard.vue'
 import type { AdminDashboard } from '@/types/api'
 import { formatCurrency } from '@/utils/format'
 
@@ -40,72 +43,82 @@ onMounted(() => {
 
 <template>
   <div>
-    <h2 class="mb-6 text-2xl font-bold text-gray-900">Dashboard</h2>
+    <PageHeader title="Dashboard" subtitle="Overview of your store performance" />
 
     <LoadingState v-if="isLoading" message="Loading dashboard..." />
     <ErrorAlert v-else-if="errorMessage" :message="errorMessage" />
 
     <template v-else-if="dashboard">
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-          <p class="text-sm text-gray-500">Total orders</p>
-          <p class="mt-1 text-2xl font-bold text-gray-900">{{ dashboard.total_orders }}</p>
-        </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-          <p class="text-sm text-gray-500">Total revenue</p>
-          <p class="mt-1 text-2xl font-bold text-gray-900">
-            {{ formatCurrency(dashboard.total_revenue) }}
-          </p>
-        </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-          <p class="text-sm text-gray-500">Total users</p>
-          <p class="mt-1 text-2xl font-bold text-gray-900">{{ dashboard.total_users }}</p>
-        </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-          <p class="text-sm text-gray-500">Total products</p>
-          <p class="mt-1 text-2xl font-bold text-gray-900">{{ dashboard.total_products }}</p>
-        </div>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label="Total orders"
+          :value="dashboard.total_orders"
+          :icon="ShoppingBag"
+          icon-bg-class="bg-indigo-100"
+          icon-color-class="text-indigo-600"
+        />
+        <StatCard
+          label="Total revenue"
+          :value="formatCurrency(dashboard.total_revenue)"
+          :icon="DollarSign"
+          icon-bg-class="bg-emerald-100"
+          icon-color-class="text-emerald-600"
+        />
+        <StatCard
+          label="Total users"
+          :value="dashboard.total_users"
+          :icon="Users"
+          icon-bg-class="bg-violet-100"
+          icon-color-class="text-violet-600"
+        />
+        <StatCard
+          label="Total products"
+          :value="dashboard.total_products"
+          :icon="Package"
+          icon-bg-class="bg-amber-100"
+          icon-color-class="text-amber-600"
+        />
       </div>
 
       <div class="mt-8">
-        <h3 class="mb-4 text-lg font-semibold text-gray-900">Recent orders</h3>
+        <h3 class="mb-4 text-lg font-semibold text-slate-900">Recent orders</h3>
 
         <EmptyState
           v-if="dashboard.recent_orders.length === 0"
           message="No orders yet."
         />
 
-        <div v-else class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        <div v-else class="table-container">
           <table class="min-w-full text-left text-sm">
-            <thead class="border-b border-gray-200 bg-gray-50">
+            <thead class="table-header sticky top-0">
               <tr>
-                <th class="px-4 py-3 font-medium text-gray-700">Order</th>
-                <th class="px-4 py-3 font-medium text-gray-700">Customer</th>
-                <th class="px-4 py-3 font-medium text-gray-700">Date</th>
-                <th class="px-4 py-3 font-medium text-gray-700">Status</th>
-                <th class="px-4 py-3 font-medium text-gray-700">Total</th>
+                <th class="px-4 py-3 font-semibold text-slate-700">Order</th>
+                <th class="px-4 py-3 font-semibold text-slate-700">Customer</th>
+                <th class="px-4 py-3 font-semibold text-slate-700">Date</th>
+                <th class="px-4 py-3 font-semibold text-slate-700">Status</th>
+                <th class="px-4 py-3 font-semibold text-slate-700">Total</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="order in dashboard.recent_orders"
                 :key="order.id"
-                class="border-b border-gray-200 hover:bg-gray-50"
+                class="table-row"
               >
-                <td class="px-4 py-3">
+                <td class="px-4 py-4">
                   <RouterLink
                     :to="{ name: 'admin-order-detail', params: { id: order.id } }"
-                    class="font-medium text-blue-600 hover:underline"
+                    class="link-brand"
                   >
                     #{{ order.id }}
                   </RouterLink>
                 </td>
-                <td class="px-4 py-3 text-gray-600">{{ order.shipping_name }}</td>
-                <td class="px-4 py-3 text-gray-600">{{ formatDate(order.created_at) }}</td>
-                <td class="px-4 py-3">
+                <td class="px-4 py-4 text-muted-foreground">{{ order.shipping_name }}</td>
+                <td class="px-4 py-4 text-muted-foreground">{{ formatDate(order.created_at) }}</td>
+                <td class="px-4 py-4">
                   <OrderStatusBadge :status="order.status" />
                 </td>
-                <td class="px-4 py-3 font-medium text-gray-900">
+                <td class="px-4 py-4 font-semibold text-slate-900">
                   {{ formatCurrency(order.total) }}
                 </td>
               </tr>
