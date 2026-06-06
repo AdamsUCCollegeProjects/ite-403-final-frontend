@@ -33,7 +33,7 @@ defineProps<{
 
       <a
         href="#products"
-        class="mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-brand-700 transition hover:bg-indigo-50"
+        class="mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-md transition hover:bg-slate-100"
       >
         Browse products
         <ArrowDown class="h-4 w-4" />

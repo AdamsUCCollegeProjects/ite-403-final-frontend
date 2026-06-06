@@ -2,12 +2,14 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import {
+  ClipboardList,
   LayoutDashboard,
   LogOut,
   Package,
   ShoppingBag,
   ShoppingCart,
   User,
+  UserPlus,
 } from 'lucide-vue-next'
 
 import AppFooter from '@/components/AppFooter.vue'
@@ -58,7 +60,7 @@ onMounted(() => {
       <nav class="page-container flex items-center justify-between py-4">
         <RouterLink to="/" class="flex items-center gap-2 text-xl font-bold text-brand-600">
           <ShoppingBag class="h-6 w-6" />
-          Boutique
+          <span v-if="!isAuthPage">Boutique</span>
         </RouterLink>
 
         <div class="flex items-center gap-1 sm:gap-2">
@@ -88,6 +90,7 @@ onMounted(() => {
             to="/orders"
             class="btn-ghost hidden sm:inline-flex"
           >
+            <ClipboardList class="h-4 w-4" />
             Orders
           </RouterLink>
 
@@ -117,18 +120,19 @@ onMounted(() => {
 
           <template v-else>
             <RouterLink to="/login" class="btn-ghost">
-              <User class="h-4 w-4 sm:hidden" />
+              <User class="h-4 w-4" />
               <span class="hidden sm:inline">Login</span>
             </RouterLink>
             <RouterLink to="/register" class="btn-primary btn-sm sm:btn">
-              Register
+              <UserPlus class="h-4 w-4" />
+              <span class="hidden sm:inline">Register</span>
             </RouterLink>
           </template>
         </div>
       </nav>
     </header>
 
-    <main class="flex-1" :class="isAuthPage ? '' : 'page-container py-8'">
+    <main class="flex-1" :class="isAuthPage ? 'px-5 sm:px-8 lg:px-10' : 'page-container py-8'">
       <RouterView />
     </main>
 

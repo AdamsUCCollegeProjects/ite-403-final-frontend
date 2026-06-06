@@ -85,7 +85,7 @@ function handleLogout(): void {
       </div>
     </aside>
 
-    <main class="min-w-0 flex-1 overflow-auto p-6 lg:p-8">
+    <main class="min-w-0 flex-1 overflow-auto px-5 py-6 sm:px-8 lg:px-10 lg:py-8">
       <RouterView />
     </main>
   </div>

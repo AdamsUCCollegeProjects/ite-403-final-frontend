@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import * as categoriesApi from '@/api/categories'
@@ -41,8 +41,14 @@ const sectionTitle = computed(() => {
   return category?.name ?? 'Products'
 })
 
+const showHeroStats = computed(() => !isLoading.value && errorMessage.value === '')
+
 function getCategoryName(categoryId: number): string | undefined {
   return categories.value.find((category) => category.id === categoryId)?.name
+}
+
+function normalizeList<T>(value: unknown): T[] {
+  return Array.isArray(value) ? value : []
 }
 
 async function loadShopData(): Promise<void> {
@@ -55,11 +61,12 @@ async function loadShopData(): Promise<void> {
       productsApi.getProducts(selectedCategoryId.value ?? undefined),
     ])
 
-    categories.value = categoryList
-    products.value = productList
+    categories.value = normalizeList<Category>(categoryList)
+    products.value = normalizeList<Product>(productList)
   } catch (error) {
     errorMessage.value =
       error instanceof ApiClientError ? error.message : 'Failed to load products'
+    products.value = []
   } finally {
     isLoading.value = false
   }
@@ -70,27 +77,27 @@ function handleCategorySelect(categoryId: number | null): void {
   void router.push({ path: '/', query })
 }
 
-onMounted(() => {
-  void loadShopData()
-})
-
-watch(selectedCategoryId, () => {
-  void loadShopData()
-})
+watch(
+  selectedCategoryId,
+  () => {
+    void loadShopData()
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <div>
     <ShopHero
-      :category-count="categories.length || undefined"
-      :product-count="products.length || undefined"
+      :category-count="showHeroStats ? categories.length : undefined"
+      :product-count="showHeroStats ? products.length : undefined"
     />
 
     <section id="products">
       <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 class="text-xl font-bold text-slate-900">{{ sectionTitle }}</h2>
         <CategoryFilter
-          v-if="categories.length > 0"
+          v-if="!isLoading && categories.length > 0"
           :categories="categories"
           :selected-category-id="selectedCategoryId"
           @select="handleCategorySelect"
@@ -99,7 +106,6 @@ watch(selectedCategoryId, () => {
 
       <LoadingState v-if="isLoading" message="Loading products..." />
       <ErrorAlert v-else-if="errorMessage" :message="errorMessage" />
-
       <EmptyState v-else-if="products.length === 0" message="No products found." />
 
       <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

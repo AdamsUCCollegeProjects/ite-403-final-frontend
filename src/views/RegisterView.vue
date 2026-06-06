@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Loader2, Lock, Mail, User, UserPlus } from 'lucide-vue-next'
 
 import AuthBrandPanel from '@/components/AuthBrandPanel.vue'
 import Button from '@/components/Button.vue'
@@ -62,26 +63,28 @@ async function handleSubmit(): Promise<void> {
   <div class="flex min-h-[calc(100vh-4.5rem)] items-stretch">
     <AuthBrandPanel />
 
-    <div class="flex flex-1 items-center justify-center px-4 py-10 lg:px-12">
+    <div class="flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
       <Card class="w-full max-w-md">
         <h1 class="text-2xl font-bold text-slate-900">Create account</h1>
-        <p class="mt-1 text-sm text-muted-foreground">Join Boutique and start shopping</p>
+        <p class="mt-1 text-sm text-muted-foreground">Fill in your details to get started</p>
 
         <div class="mt-6 flex rounded-lg bg-slate-100 p-1">
           <button
             type="button"
-            class="flex-1 rounded-md px-3 py-2 text-sm font-medium transition"
+            class="flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition"
             :class="getRoleToggleClass(role === 'customer')"
             @click="role = 'customer'"
           >
+            <User class="h-4 w-4" />
             Customer
           </button>
           <button
             type="button"
-            class="flex-1 rounded-md px-3 py-2 text-sm font-medium transition"
+            class="flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition"
             :class="getRoleToggleClass(role === 'admin')"
             @click="role = 'admin'"
           >
+            <UserPlus class="h-4 w-4" />
             Admin
           </button>
         </div>
@@ -94,6 +97,8 @@ async function handleSubmit(): Promise<void> {
             label="Name"
             name="name"
             required
+            placeholder="Your full name"
+            :icon="User"
             :error="fieldErrors.name"
           />
           <FormField
@@ -102,6 +107,8 @@ async function handleSubmit(): Promise<void> {
             name="email"
             type="email"
             required
+            placeholder="you@example.com"
+            :icon="Mail"
             :error="fieldErrors.email"
           />
           <FormField
@@ -110,10 +117,14 @@ async function handleSubmit(): Promise<void> {
             name="password"
             type="password"
             required
+            placeholder="Choose a password"
+            :icon="Lock"
             :error="fieldErrors.password"
           />
 
           <Button type="submit" full-width :disabled="isSubmitting">
+            <Loader2 v-if="isSubmitting" class="h-4 w-4 animate-spin" />
+            <UserPlus v-else class="h-4 w-4" />
             {{ isSubmitting ? 'Creating account...' : 'Create account' }}
           </Button>
         </form>

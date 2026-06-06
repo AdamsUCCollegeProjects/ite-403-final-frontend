@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { CreditCard } from 'lucide-vue-next'
 
 import { ApiClientError } from '@/api/client'
 import CartItemRow from '@/components/CartItemRow.vue'
@@ -118,6 +119,7 @@ onMounted(() => {
           </dl>
 
           <RouterLink to="/checkout" class="btn-primary mt-6 w-full">
+            <CreditCard class="h-4 w-4" />
             Proceed to checkout
           </RouterLink>
         </div>

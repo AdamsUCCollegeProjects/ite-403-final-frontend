@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { CheckCircle, Minus, Plus } from 'lucide-vue-next'
+import { CheckCircle, Loader2, Minus, Plus, ShoppingCart } from 'lucide-vue-next'
 
 import * as categoriesApi from '@/api/categories'
 import * as productsApi from '@/api/products'
@@ -172,6 +172,8 @@ onMounted(() => {
               :disabled="isAdding || product.stock === 0"
               @click="handleAddToCart"
             >
+              <Loader2 v-if="isAdding" class="h-4 w-4 animate-spin" />
+              <ShoppingCart v-else class="h-4 w-4" />
               {{ isAdding ? 'Adding...' : 'Add to cart' }}
             </Button>
           </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Loader2, PackageCheck } from 'lucide-vue-next'
 
 import * as ordersApi from '@/api/orders'
 import { ApiClientError } from '@/api/client'
@@ -120,6 +121,8 @@ onMounted(() => {
             />
 
             <Button type="submit" full-width :disabled="isSubmitting">
+              <Loader2 v-if="isSubmitting" class="h-4 w-4 animate-spin" />
+              <PackageCheck v-else class="h-4 w-4" />
               {{ isSubmitting ? 'Placing order...' : 'Place order' }}
             </Button>
           </form>

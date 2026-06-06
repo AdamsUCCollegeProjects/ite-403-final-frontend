@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Loader2, Lock, LogIn, Mail } from 'lucide-vue-next'
 
 import AuthBrandPanel from '@/components/AuthBrandPanel.vue'
 import Button from '@/components/Button.vue'
@@ -54,10 +55,10 @@ async function handleSubmit(): Promise<void> {
   <div class="flex min-h-[calc(100vh-4.5rem)] items-stretch">
     <AuthBrandPanel />
 
-    <div class="flex flex-1 items-center justify-center px-4 py-10 lg:px-12">
+    <div class="flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
       <Card class="w-full max-w-md">
-        <h1 class="text-2xl font-bold text-slate-900">Welcome back</h1>
-        <p class="mt-1 text-sm text-muted-foreground">Sign in to your account</p>
+        <h1 class="text-2xl font-bold text-slate-900">Sign in</h1>
+        <p class="mt-1 text-sm text-muted-foreground">Enter your credentials to continue</p>
 
         <ErrorAlert v-if="errorMessage" class="mt-6" :message="errorMessage" />
 
@@ -68,6 +69,8 @@ async function handleSubmit(): Promise<void> {
             name="email"
             type="email"
             required
+            placeholder="you@example.com"
+            :icon="Mail"
             :error="fieldErrors.email"
           />
           <FormField
@@ -76,10 +79,14 @@ async function handleSubmit(): Promise<void> {
             name="password"
             type="password"
             required
+            placeholder="Your password"
+            :icon="Lock"
             :error="fieldErrors.password"
           />
 
           <Button type="submit" full-width :disabled="isSubmitting">
+            <Loader2 v-if="isSubmitting" class="h-4 w-4 animate-spin" />
+            <LogIn v-else class="h-4 w-4" />
             {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
           </Button>
         </form>
