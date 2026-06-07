@@ -219,7 +219,7 @@ onMounted(() => {
         <FormField v-model="formState.name" label="Name" name="product_name" required />
         <FormField
           v-model="formState.price"
-          label="Price"
+          label="Price ( $ )"
           name="product_price"
           type="number"
           required
