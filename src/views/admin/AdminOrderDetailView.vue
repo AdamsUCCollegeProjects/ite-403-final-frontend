@@ -93,7 +93,7 @@ onMounted(() => {
         <OrderStatusBadge :status="order.status" />
       </div>
 
-      <Card class="mb-6">
+      <Card class="mb-6 p-5">
         <h3 class="mb-3 font-semibold text-slate-900">Update status</h3>
         <div class="flex flex-wrap items-end gap-3">
           <div>
@@ -118,7 +118,7 @@ onMounted(() => {
       </Card>
 
       <div class="grid gap-6 lg:grid-cols-3">
-        <Card class="lg:col-span-1">
+        <Card class="lg:col-span-1 p-5">
           <h3 class="mb-3 font-semibold text-slate-900">Shipping</h3>
           <address class="space-y-1 text-sm not-italic text-slate-700">
             <p class="font-medium">{{ order.shipping_name }}</p>
