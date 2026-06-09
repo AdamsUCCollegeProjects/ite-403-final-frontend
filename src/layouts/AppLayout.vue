@@ -53,8 +53,8 @@ onMounted(() => {
       class="sticky top-0 z-50 transition-all duration-200"
       :class="
         isScrolled
-          ? 'border-b border-slate-200/80 bg-white/80 shadow-sm backdrop-blur-md'
-          : 'border-b border-transparent bg-white'
+          ? 'border-b border-[var(--color-border-soft)]/80 bg-[var(--color-surface)]/90 shadow-sm backdrop-blur-md'
+          : 'border-b border-transparent bg-[var(--color-surface)]'
       "
     >
       <nav class="page-container flex items-center justify-between py-4">
@@ -102,7 +102,7 @@ onMounted(() => {
           <template v-if="authStore.isAuthenticated">
             <div class="hidden items-center gap-2 pl-2 sm:flex">
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700"
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800"
               >
                 {{ userInitials }}
               </div>

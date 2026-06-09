@@ -53,7 +53,7 @@ const stockLabel = computed(() => {
       <div class="mb-2 flex items-start justify-between gap-2">
         <span
           v-if="categoryName"
-          class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600"
+          class="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800"
         >
           {{ categoryName }}
         </span>

@@ -54,8 +54,8 @@ onMounted(() => {
           label="Total orders"
           :value="dashboard.total_orders"
           :icon="ShoppingBag"
-          icon-bg-class="bg-indigo-100"
-          icon-color-class="text-indigo-600"
+          icon-bg-class="bg-brand-100"
+          icon-color-class="text-brand-700"
         />
         <StatCard
           label="Total revenue"
@@ -68,8 +68,8 @@ onMounted(() => {
           label="Total users"
           :value="dashboard.total_users"
           :icon="Users"
-          icon-bg-class="bg-violet-100"
-          icon-color-class="text-violet-600"
+          icon-bg-class="bg-brand-200"
+          icon-color-class="text-brand-800"
         />
         <StatCard
           label="Total products"

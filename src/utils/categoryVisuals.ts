@@ -7,7 +7,7 @@ export interface CategoryVisual {
 
 const CATEGORY_VISUALS: Record<string, CategoryVisual> = {
   clothes: {
-    gradient: 'from-indigo-500 to-violet-600',
+    gradient: 'from-brand-600 to-brand-800',
     icon: Shirt,
   },
   shoes: {
@@ -21,7 +21,7 @@ const CATEGORY_VISUALS: Record<string, CategoryVisual> = {
 }
 
 const FALLBACK_VISUAL: CategoryVisual = {
-  gradient: 'from-slate-400 to-slate-600',
+  gradient: 'from-stone-400 to-stone-600',
   icon: ShoppingBag,
 }
 

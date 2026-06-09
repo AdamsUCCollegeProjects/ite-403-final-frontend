@@ -9,14 +9,15 @@ defineProps<{
 
 <template>
   <section
-    class="relative mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-brand-600 via-indigo-600 to-violet-700 px-6 py-12 text-white sm:px-10 sm:py-16"
+    class="relative mb-10 overflow-hidden rounded-2xl px-6 py-12 text-white sm:px-10 sm:py-16"
+    style="background-color: #3d2b1f; background-image: radial-gradient(circle at 80% 20%, rgba(194,112,62,0.25) 0%, transparent 55%), radial-gradient(circle at 10% 80%, rgba(194,112,62,0.15) 0%, transparent 50%);"
   >
     <div class="relative z-10 max-w-xl">
-      <p class="text-sm font-medium uppercase tracking-wider text-indigo-200">Welcome to Boutique</p>
+      <p class="text-sm font-medium uppercase tracking-wider text-amber-300">Handcrafted with care</p>
       <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
         Style that fits your everyday
       </h1>
-      <p class="mt-4 text-indigo-100">
+      <p class="mt-4 text-stone-300">
         Discover curated clothes, shoes, and bags — handpicked for quality and comfort.
       </p>
 
@@ -33,7 +34,7 @@ defineProps<{
 
       <a
         href="#products"
-        class="mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-md transition hover:bg-slate-100"
+        class="mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-stone-900 shadow-md transition hover:bg-slate-100"
       >
         Browse products
         <ArrowDown class="h-4 w-4" />

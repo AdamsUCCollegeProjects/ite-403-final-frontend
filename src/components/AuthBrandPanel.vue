@@ -10,7 +10,8 @@ const FEATURES = [
 
 <template>
   <div
-    class="hidden flex-col justify-between bg-gradient-to-br from-brand-600 via-indigo-600 to-violet-700 p-10 text-white lg:flex lg:w-1/2 lg:p-12"
+    class="hidden flex-col justify-between p-10 text-white lg:flex lg:w-1/2 lg:p-12"
+    style="background-color: #3d2b1f; background-image: radial-gradient(circle at 80% 20%, rgba(194,112,62,0.25) 0%, transparent 55%), radial-gradient(circle at 10% 80%, rgba(194,112,62,0.15) 0%, transparent 50%);"
   >
     <div>
       <p class="flex items-center gap-2 text-lg font-bold">
@@ -20,7 +21,7 @@ const FEATURES = [
       <h2 class="mt-10 text-3xl font-bold leading-tight">
         Your style,<br />delivered simply.
       </h2>
-      <p class="mt-4 text-indigo-100">
+      <p class="mt-4 text-stone-300">
         Join thousands of shoppers discovering quality essentials every day.
       </p>
     </div>
@@ -29,7 +30,7 @@ const FEATURES = [
       <li
         v-for="feature in FEATURES"
         :key="feature.text"
-        class="flex items-center gap-3 text-sm text-indigo-100"
+        class="flex items-center gap-3 text-sm text-stone-300"
       >
         <div class="rounded-lg bg-white/10 p-2">
           <component :is="feature.icon" class="h-4 w-4" />

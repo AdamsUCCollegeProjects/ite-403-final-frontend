@@ -3,11 +3,11 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <footer class="mt-auto border-t border-slate-200 bg-white">
+  <footer class="mt-auto border-t border-[var(--color-border-soft)] bg-[var(--color-surface)]">
     <div class="page-container py-12">
       <div class="grid gap-8 md:grid-cols-3">
         <div>
-          <p class="text-lg font-bold text-brand-600">Boutique</p>
+          <p class="text-lg font-bold text-brand-600" style="font-family: var(--font-serif)">Boutique</p>
           <p class="mt-2 text-sm text-muted-foreground">
             Curated essentials for everyday style. Quality products, simple shopping.
           </p>
@@ -31,7 +31,7 @@ import { RouterLink } from 'vue-router'
         </div>
       </div>
 
-      <p class="mt-10 border-t border-slate-100 pt-6 text-center text-xs text-muted-foreground">
+      <p class="mt-10 border-t border-[var(--color-border-soft)] pt-6 text-center text-xs text-muted-foreground">
         &copy; {{ new Date().getFullYear() }} Boutique Shop. All rights reserved.
       </p>
     </div>
