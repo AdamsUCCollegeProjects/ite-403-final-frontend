@@ -2,6 +2,8 @@ export type UserRole = 'user' | 'admin'
 
 export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'
 
+export type PaymentStatus = 'awaiting' | 'paid' | 'failed'
+
 export interface User {
   id: number
   email: string
@@ -121,6 +123,9 @@ export interface OrderSummary {
   id: number
   status: OrderStatus
   total: string
+  payment_status: PaymentStatus
+  payway_tran_id: string | null
+  payway_apv: string | null
   shipping_name: string
   shipping_address: string
   shipping_city: string
@@ -132,6 +137,10 @@ export interface OrderSummary {
 
 export interface OrderDetail extends OrderSummary {
   items: OrderItem[]
+}
+
+export interface CheckoutResponse extends OrderDetail {
+  checkout_html: string
 }
 
 export interface AdminOrderSummary extends OrderSummary {

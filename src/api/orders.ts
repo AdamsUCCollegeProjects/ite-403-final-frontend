@@ -1,9 +1,9 @@
 import { apiRequest } from '@/api/client'
-import type { CheckoutPayload, OrderDetail, OrderSummary } from '@/types/api'
+import type { CheckoutPayload, CheckoutResponse, OrderDetail, OrderSummary } from '@/types/api'
 import { unwrapList } from '@/utils/api'
 
-export function checkout(payload: CheckoutPayload): Promise<OrderDetail> {
-  return apiRequest<OrderDetail>({
+export function checkout(payload: CheckoutPayload): Promise<CheckoutResponse> {
+  return apiRequest<CheckoutResponse>({
     method: 'POST',
     url: '/api/checkout',
     data: payload,

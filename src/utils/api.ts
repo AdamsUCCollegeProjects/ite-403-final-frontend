@@ -1,3 +1,13 @@
+/**
+ * Extracts a list from an API response.
+ *
+ * Supports responses that are either:
+ * - A raw array: `[...]`
+ * - An object containing the array under the specified key:
+ *   `{ [key]: [...] }`
+ *
+ * Returns an empty array when the expected list cannot be found.
+ */
 export function unwrapList<T>(response: unknown, key: string): T[] {
   if (Array.isArray(response)) {
     return response

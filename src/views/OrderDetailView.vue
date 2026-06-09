@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { CheckCircle, Circle, Package, Truck } from 'lucide-vue-next'
+import { CheckCircle, Circle, Clock, Package, Truck } from 'lucide-vue-next'
 
 import * as ordersApi from '@/api/orders'
 import { ApiClientError } from '@/api/client'
@@ -22,6 +22,12 @@ const errorMessage = ref('')
 
 const orderId = computed(() => Number.parseInt(route.params.id as string, 10))
 
+const showPaymentSuccess = computed(() => route.query.paid === '1')
+
+const isAwaitingPayment = computed(
+  () => order.value?.status === 'pending' && order.value?.payment_status === 'awaiting',
+)
+
 const currentStepIndex = computed(() => {
   if (!order.value) {
     return -1
@@ -29,6 +35,10 @@ const currentStepIndex = computed(() => {
 
   if (order.value.status === 'cancelled') {
     return -1
+  }
+
+  if (isAwaitingPayment.value) {
+    return 0
   }
 
   return STATUS_STEPS.indexOf(order.value.status)
@@ -53,7 +63,15 @@ function formatDate(dateString: string): string {
 }
 
 function isStepComplete(index: number): boolean {
-  return currentStepIndex.value >= index
+  if (isAwaitingPayment.value) {
+    return false
+  }
+
+  return currentStepIndex.value > index
+}
+
+function isStepActive(index: number): boolean {
+  return currentStepIndex.value === index
 }
 
 onMounted(() => {
@@ -74,6 +92,19 @@ onMounted(() => {
         back-label="Back to orders"
       />
 
+      <div v-if="showPaymentSuccess" class="success-banner mb-6 flex items-center gap-2">
+        <CheckCircle class="h-4 w-4 shrink-0" />
+        Payment received. Your order is being confirmed.
+      </div>
+
+      <div
+        v-else-if="isAwaitingPayment"
+        class="mb-6 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+      >
+        <Clock class="h-4 w-4 shrink-0" />
+        Payment pending — complete payment to confirm this order.
+      </div>
+
       <div class="mb-6 flex items-center gap-3">
         <OrderStatusBadge :status="order.status" />
       </div>
@@ -93,19 +124,28 @@ onMounted(() => {
               :class="
                 isStepComplete(index)
                   ? 'bg-brand-600 text-white'
-                  : 'bg-slate-100 text-slate-400'
+                  : isStepActive(index)
+                    ? 'bg-amber-100 text-amber-700 ring-2 ring-amber-300'
+                    : 'bg-slate-100 text-slate-400'
               "
             >
               <CheckCircle v-if="isStepComplete(index)" class="h-5 w-5" />
+              <Clock v-else-if="isStepActive(index) && isAwaitingPayment" class="h-5 w-5" />
               <Package v-else-if="step === 'pending'" class="h-5 w-5" />
               <Circle v-else-if="step === 'confirmed'" class="h-5 w-5" />
               <Truck v-else class="h-5 w-5" />
             </div>
             <span
               class="mt-2 text-xs font-medium capitalize"
-              :class="isStepComplete(index) ? 'text-brand-600' : 'text-muted-foreground'"
+              :class="
+                isStepComplete(index)
+                  ? 'text-brand-600'
+                  : isStepActive(index)
+                    ? 'text-amber-700'
+                    : 'text-muted-foreground'
+              "
             >
-              {{ step }}
+              {{ isAwaitingPayment && step === 'pending' ? 'awaiting payment' : step }}
             </span>
           </div>
         </div>
