@@ -110,7 +110,7 @@ onMounted(() => {
       </Button>
     </div>
 
-    <Card v-if="isFormOpen" class="mb-6">
+    <Card v-if="isFormOpen" class="mb-6 p-5">
       <h3 class="mb-4 font-semibold text-slate-900">
         {{ editingCategory ? 'Edit category' : 'New category' }}
       </h3>
