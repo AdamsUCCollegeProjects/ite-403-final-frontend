@@ -4,7 +4,8 @@ import router from '@/router'
 import type { ApiErrorResponse, NormalizedApiError } from '@/types/api'
 import { clearAuthToken, getAuthToken } from '@/utils/storage'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://7922-202-62-62-131.ngrok-free.app'
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? 'https://dc99-202-62-62-131.ngrok-free.app'
 
 const AUTH_ENDPOINTS = ['/api/login', '/api/register', '/api/admin/register']
 
