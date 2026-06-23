@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import {
   ClipboardList,
   LayoutDashboard,
@@ -19,6 +19,7 @@ import { useCartStore } from '@/stores/cart'
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const route = useRoute()
+const router = useRouter()
 const isScrolled = ref(false)
 
 const isAuthPage = computed(() => route.name === 'login' || route.name === 'register')
@@ -38,8 +39,9 @@ function handleScroll(): void {
   isScrolled.value = window.scrollY > 8
 }
 
-function handleLogout(): void {
+async function handleLogout(): Promise<void> {
   authStore.logout()
+  await router.push('/login')
 }
 
 onMounted(() => {

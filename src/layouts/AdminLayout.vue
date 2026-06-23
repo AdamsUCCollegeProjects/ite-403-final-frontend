@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import {
   ExternalLink,
   LayoutDashboard,
@@ -13,6 +13,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 const route = useRoute()
+const router = useRouter()
 
 const NAV_LINKS = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
@@ -37,8 +38,9 @@ function getNavLinkClass(isActive: boolean): string {
   return 'border-l-2 border-transparent text-slate-400 hover:bg-slate-800 hover:text-white'
 }
 
-function handleLogout(): void {
+async function handleLogout(): Promise<void> {
   authStore.logout()
+  await router.push('/login')
 }
 </script>
 

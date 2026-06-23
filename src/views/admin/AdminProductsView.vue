@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
 
 import * as adminApi from '@/api/admin'
@@ -49,6 +49,10 @@ const originalImageFileId = ref<string | null>(null)
 const isFormOpen = ref(false)
 const isSubmitting = ref(false)
 const deletingId = ref<number | null>(null)
+const successToastMessage = ref('')
+
+const TOAST_HIDE_DELAY_MS = 1800
+let hideToastTimer: ReturnType<typeof setTimeout> | null = null
 
 function getCategoryName(categoryId: number): string {
   return categories.value.find((category) => category.id === categoryId)?.name ?? '—'
@@ -176,6 +180,14 @@ async function handleDelete(productId: number): Promise<void> {
   try {
     await adminApi.deleteProduct(productId)
     await loadData()
+    successToastMessage.value = 'Product deleted'
+    if (hideToastTimer) {
+      clearTimeout(hideToastTimer)
+    }
+    hideToastTimer = setTimeout(() => {
+      successToastMessage.value = ''
+      hideToastTimer = null
+    }, TOAST_HIDE_DELAY_MS)
   } catch (error) {
     errorMessage.value =
       error instanceof ApiClientError ? error.message : 'Failed to delete product'
@@ -183,6 +195,14 @@ async function handleDelete(productId: number): Promise<void> {
     deletingId.value = null
   }
 }
+
+onBeforeUnmount(() => {
+  if (!hideToastTimer) {
+    return
+  }
+
+  clearTimeout(hideToastTimer)
+})
 
 onMounted(() => {
   void loadData()
@@ -322,6 +342,15 @@ onMounted(() => {
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div
+      v-if="successToastMessage"
+      class="fixed bottom-4 right-4 z-50 rounded-md bg-slate-900 px-3 py-2 text-sm text-white shadow-lg"
+      role="status"
+      aria-live="polite"
+    >
+      {{ successToastMessage }}
     </div>
   </div>
 </template>
